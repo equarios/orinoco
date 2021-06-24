@@ -4,6 +4,7 @@
   "description": "eccomerce",
   "main": "index.js",
   "scripts": {
+    "start": "http-server -c10 -a localhost -p 3001",
     "test": "test"
   },
   "repository": {
