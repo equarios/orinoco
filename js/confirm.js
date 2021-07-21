@@ -1,28 +1,19 @@
+window.onload = function () {
+  window.localStorage.clear();
+};
 
-const createElement = element => document.createElement(element)
-const classElement = (element, classArray) => {
-  classArray.forEach(el => {
-    element.classList.add(el)
-  })
-}
-const append = (parent, el) => parent.appendChild(el)
+const greet = document.getElementById("greetS");
+const getOrder = JSON.parse(localStorage.getItem("customerOrder"));
 
-const greetingUser = document.getElementById("greetingUser")
+const custName = document.createElement("h2");
+custName.innerHTML = " Thank You For Order" + " " + getOrder.name + " :";
 
-const getCustomerOrder = JSON.parse(localStorage.getItem("customerOrder"))
+const totalAmount = document.createElement("p");
+totalAmount.innerHTML = "Your Total Amount Is : " + getOrder.price + " $ ";
 
-const congrats = createElement("h2")
-congrats.innerHTML = " Congratulations for your order" + " " + getCustomerOrder.name + " :"
+const autoId = document.createElement("p");
+autoId.innerHTML = " Your Order ID : " + getOrder.orderId;
 
-const totalOrder = createElement("p")
-totalOrder.innerHTML = "Your total order is : " + getCustomerOrder.price + "$"
-
-const idOrder = createElement("p")
-idOrder.innerHTML = " Here is your id order : " + getCustomerOrder.orderId
-
-
-
-
-append(greetingUser, congrats)
-append(greetingUser, idOrder)
-append(greetingUser, totalOrder)
+greet.appendChild(autoId);
+greet.appendChild(custName);
+greet.appendChild(totalAmount);

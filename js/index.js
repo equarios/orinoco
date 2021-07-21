@@ -1,138 +1,108 @@
-const createElement = element => document.createElement(element);
-const classElement = (element, classArray) => {
-	classArray.forEach(el => {
-		element.classList.add(el);
-	});
-};
-const append = (parent, el) => parent.appendChild(el);
-
 const container = document.querySelector("#camerasContainer");
-const numberArticle = document.getElementById("numberArticle");
+const itemNumber = document.getElementById("itemNumber");
+
 let cart = [];
 
-const checkStorage = localStorage.getItem("cart");
-const checkStorageParse = JSON.parse(localStorage.getItem("cart"));
-
+let checkStorage = localStorage.getItem("cart");
+let checkStorageParse = JSON.parse(localStorage.getItem("cart"));
 
 if (checkStorage) {
-	cart = [...checkStorageParse];
-	numberArticle.innerHTML = cart.length;
+  cart = [...checkStorageParse];
+  itemNumber.innerHTML = cart.length;
 }
-const fetchIndex = () => {
-	fetch("http://localhost:3000/api/cameras/")
-		.then(response => response.json())
-		.then(function (data) {
-			for (let getTeddies of data) {
-				
-				let divCol = createElement("div");
-				classElement(divCol, ["col-lg-6"]);
 
-				let divCard = createElement("div");
-				classElement(divCard, ["card"]);
-				divCard.setAttribute("width", "30rem");
+fetch("http://localhost:3000/api/cameras/")
+  .then((response) => response.json())
+  .then(function (data) {
+    for (let getCameras of data) {
+      let divColum = document.createElement("div");
+      divColum.classList.add("col-lg-6");
+      divColum.style.marginBottom = "2rem";
 
-				let divCardBody = createElement("div");
-				classElement(divCardBody, ["card-body"]);
+      let divCards = document.createElement("div");
+      divCards.classList.add("card");
+      divCards.setAttribute("width", "30rem");
 
-				let divButtons = createElement("div");
-				classElement(divButtons, ["buttonPosition"]);
+      let cardBdy = document.createElement("div");
+      cardBdy.classList.add("card-body");
 
-				
-				let img = createElement("img");
-				img.classList.add("card-image-top");
-				img.setAttribute("alt", "teddies");
-				img.src = getTeddies.imageUrl;
+      let divBtn = document.createElement("div");
+      divBtn.classList.add("my");
 
-				let teddyName = createElement("h2");
-				teddyName.innerHTML = getTeddies.name;
-				classElement(teddyName, ["card-title"]);
+      let cameraName = document.createElement("h2");
+      cameraName.innerHTML = getCameras.name;
+      cameraName.classList.add("card-title");
 
-				let teddyPrice = createElement("span");
-				teddyPrice.innerHTML = "Price : " + " " + getTeddies.price / 100 + " $";
+      let img = document.createElement("img");
+      img.classList.add("card-image-top");
+      img.setAttribute("alt", "cameras");
+      //img.style.marginBottom= "20rem";
+      //img.style.width= "50rem";
+      img.src = getCameras.imageUrl;
 
-				let teddyDescription = createElement("p");
-				teddyDescription.innerHTML =
-					"Description : " + " " + getTeddies.description;
+      let cameraPrice = document.createElement("span");
+      cameraPrice.innerHTML = "<b>Price:<b>" + " " + getCameras.price;
+      cameraPrice.classList.add("card-price");
 
-				let buttonInfo = createElement("button");
-				buttonInfo.innerHTML = "See more";
-				classElement(buttonInfo, ["btn", "btn-outline-dark", "selection"]);
+      let cameraDes = document.createElement("p");
+      cameraDes.innerHTML = "Description:" + " " + getCameras.description;
+      cameraDes.classList.add("card-description");
 
-				let addButton = createElement("button");
-				addButton.innerHTML = "Add ";
-				classElement(addButton, ["btn", "btn-outline-dark", "addToCart"]);
+      let seeBtn = document.createElement("button");
+      seeBtn.innerHTML = "See Details";
+      seeBtn.classList.add("btn", "btn-outline-dark", "selection");
 
-				const seeMore = () => {
-					buttonInfo.addEventListener("click", () => {
-						let id = getTeddies._id;
-						document.location.href = "./product.html?id=" + id;
-					});
-				};
+      let addBtn = document.createElement("button");
+      addBtn.innerHTML = "Add To Cart";
+      addBtn.classList.add("btn", "btn-outline-dark", "addToCart");
+      addBtn.style.marginLeft = "2rem";
 
-				seeMore();
+      const seeDtls = () => {
+        seeBtn.addEventListener("click", () => {
+          let ids = getCameras._id;
+          document.location.href = "./product.html?id=" + ids;
+        });
+      };
+      try {
+        seeDtls(console.log("welldone products"));
+      } catch (error) {}
+      (error) => {
+        console.log(error);
+      };
 
-				addButton.addEventListener("click", () => {
-					const addTocart = () => {
-						const teddyAdd = {
-							id: getTeddies._id,
-							name: getTeddies.name,
-							image: getTeddies.imageUrl,
-							description: getTeddies.description,
-							lenses: getTeddies.lenses[0],
-							price: getTeddies.price
-						};
-						cart = [...cart, teddyAdd];
+      addBtn.addEventListener("click", () => {
+        const addToCart = () => {
+          const camAdd = {
+            id: getCameras._id,
+            name: getCameras.name,
+            image: getCameras.imageUrl,
+            description: getCameras.description,
+            lense: getCameras.lenses[0],
+            price: getCameras.price,
+          };
+          cart = [...cart, camAdd];
 
-						localStorage.setItem("cart", JSON.stringify(cart));
+          localStorage.setItem("cart", JSON.stringify(cart));
 
-						numberArticle.innerHTML = cart.length;
+          itemNumber.innerHTML = cart.length;
+        };
+        addToCart((document.location.href = "./cart.html"));
+      });
 
-						Swal.fire({
-							title: "Your product has been added",
-							icon: "success",
-							html:
-								'<a href ="./cart.html">Acces your cart by clicking here</a><br>',
-							showCloseButton: true,
-							showConfirmButton: false
-						});
-					};
-					try {
-						addTocart();
-					} catch (error) {
-						container.innerHTML =
-							"<h3 class = error> <b><i> Sorry , something has gone wrong please try later </h3>" +
-							error.name +
-							error.message;
-					}
-				});
+      //console.log(data);
 
-				
-				append(divCardBody, teddyName);
-				append(divCardBody, teddyPrice);
-				append(divCardBody, teddyDescription);
-				append(divCol, divCard);
-				append(divCard, img);
-				append(divCard, divCardBody);
-				append(divCard, buttonInfo);
-				append(divCard, addButton);
-				append(divCardBody, divButtons);
-				append(divButtons, buttonInfo);
-				append(divButtons, addButton);
-				append(container, divCol);
-			}
-		})
-		.catch(error => {
-			console.log(error); 
-		});
-};
+      cardBdy.appendChild(cameraName);
+      cardBdy.appendChild(cameraPrice);
+      cardBdy.appendChild(cameraDes);
+      divColum.appendChild(divCards);
+      divCards.appendChild(img);
+      divCards.appendChild(cardBdy);
+      cardBdy.appendChild(divBtn);
+      divBtn.appendChild(seeBtn);
+      divBtn.appendChild(addBtn);
+      container.appendChild(divColum);
+    }
+  });
 
-fetchIndex();
-
-
-
-let numberProductsInCart = JSON.parse(localStorage.getItem("cart"));
-if (!numberProductsInCart) {
-	numberArticle.innerHTML = 0;
-} else {
-	numberArticle.innerHTML = numberProductsInCart.length;
-}
+let cartNum = JSON.parse(localStorage.getItem("cart"));
+itemNumber.innerHTML = cartNum.length;

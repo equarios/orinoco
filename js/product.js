@@ -1,175 +1,133 @@
-
-
-const createElement = element => document.createElement(element)
-const classElement = (element, classArray) => {
-    classArray.forEach(el => {
-        element.classList.add(el)
-    })
-}
-const append = (parent, el) => parent.appendChild(el)
-
-
-
-const urlParams = new URLSearchParams(window.location.search)
-let idCameras = urlParams.get("id")
-
-
-const choosenProduct = document.querySelector("#choosenProduct")
-const numberArticle = document.getElementById("numberArticle")
-
+const urlSrch = new URLSearchParams(window.location.search);
+let camId = urlSrch.get("id");
 
 let camera = null;
 
-
-const previousFunction = () => window.location = ("../index.html" + "#ourProducts")
+const slectedProduct = document.querySelector("#slectedProduct");
+const itemNumber = document.getElementById("itemNumber");
 
 let cart = [];
 
+const checkStorage = localStorage.getItem("cart");
+const checkStorageParse = JSON.parse(localStorage.getItem("cart"));
 
+cart = [...checkStorageParse];
+itemNumber.innerHTML = cart.length;
 
+fetch("http://localhost:3000/api/cameras/" + camId)
+  .then((response) => response.json())
+  .then(function (data) {
+    camera = data;
 
-const addTocart = () => {
-    const teddyAdd = {
-        id: camera._id,
-        name: camera.name,
-        image: camera.imageUrl,
-        description: camera.description,
-        price: camera.price,
-        lense: camera.lenses[0]
-        
+    let divColum = document.createElement("div");
+    divColum.classList.add("col-lg-6");
+    divColum.style.marginBottom = "2rem";
+
+    let divCards = document.createElement("div");
+    divCards.classList.add("card");
+    divCards.setAttribute("width", "30rem");
+
+    let cardBdy = document.createElement("div");
+    cardBdy.classList.add("card-body");
+
+    let divBtn = document.createElement("div");
+    divBtn.classList.add("my");
+
+    let cameraName = document.createElement("h2");
+    cameraName.innerHTML = camera.name;
+    cameraName.classList.add("card-title");
+
+    let img = document.createElement("img");
+    img.classList.add("card-image-top");
+    img.setAttribute("alt", "cameras");
+    //img.style.marginBottom= "20rem";
+    //img.style.width= "50rem";
+    img.src = camera.imageUrl;
+
+    let cameraPrice = document.createElement("span");
+    cameraPrice.innerHTML = "<b>Price:<b>" + " " + camera.price;
+    cameraPrice.classList.add("card-price");
+
+    let cameraDes = document.createElement("p");
+    cameraDes.innerHTML = "Description:" + " " + camera.description;
+    cameraDes.classList.add("card-description");
+
+    let selectLabl = document.createElement("label");
+    selectLabl.innerHTML = "<b> Lense-Type : &nbsp</b>";
+
+    let cameraLense = document.createElement("select");
+    cameraLense.innerHTML = camera.lenses;
+    cameraLense.classList.add("card-price");
+
+    cameraLense.setAttribute("id", "idd");
+
+    //console.log(result);
+
+    cameraLense.onchange = handleChange;
+    var e, result;
+    function handleChange() {
+      e = document.getElementById("idd");
+      result = e.options[e.selectedIndex].text;
     }
-    cart = [...cart, teddyAdd];
 
-    localStorage.setItem("cart", JSON.stringify(cart))
+    for (let i = 0; i < camera.lenses.length; i++) {
+      let option = document.createElement("option");
+      let lens = camera.lenses[i];
+      option.innerHTML = lens;
+      cameraLense.appendChild(option);
+    }
 
-    numberArticle.innerHTML = cart.length
-    Swal.fire({
-        title: 'Your product has been added',
-        icon: 'success',
-        html: '<a href ="./cart.html">Acces your cart by clicking here</a><br><br> <a href =../index.html#ourProducts>Or go back to home page</a>',
-        showCloseButton: true,
-        showConfirmButton: false
-    })
-}
+    let backBtn = document.createElement("button");
+    backBtn.innerHTML = "Go-Back";
+    backBtn.classList.add("btn", "btn-outline-dark", "selection");
+    backBtn.style.marginTop = "3rem";
 
-const checkStorage = localStorage.getItem("cart")
-const checkStorageParse = JSON.parse(localStorage.getItem("cart"))
+    let addBtn = document.createElement("button");
+    addBtn.innerHTML = "Add To Cart";
+    addBtn.classList.add("btn", "btn-outline-dark", "addToCart");
+    addBtn.style.marginLeft = "2rem";
+    addBtn.style.marginTop = "3rem";
 
+    cardBdy.appendChild(cameraName);
+    cardBdy.appendChild(cameraPrice);
+    cardBdy.appendChild(cameraDes);
+    divColum.appendChild(divCards);
+    divCards.appendChild(img);
+    cardBdy.appendChild(selectLabl);
+    cardBdy.appendChild(cameraLense);
 
-if (checkStorage) {
-    cart = [...checkStorageParse]
-    numberArticle.innerHTML = cart.length
-} else {
-    choosenProduct.innerHTML = " <h3 class = add your product to your cart</h3"
-}
+    divCards.appendChild(cardBdy);
+    cardBdy.appendChild(divBtn);
+    divBtn.appendChild(backBtn);
+    divBtn.appendChild(addBtn);
+    slectedProduct.appendChild(divColum);
 
-const fetchById = () => {
-    fetch("http://localhost:3000/api/cameras/" + idCameras)
-        .then(response => response.json())
-        .then(function (data) {
-            camera = data
+    const gback = () => {
+      backBtn.addEventListener("click", () => {
+        document.location.href = "./index.html";
+      });
+    };
+    gback();
 
-            const divCol4 = createElement("div")
-            classElement(divCol4, ["col-lg-4"])
+    addBtn.addEventListener("click", () => {
+      const addToCart = () => {
+        const camAdd = {
+          id: camera._id,
+          name: camera.name,
+          image: camera.imageUrl,
+          description: camera.description,
+          lense: result,
+          price: camera.price,
+        };
+        cart = [...cart, camAdd];
 
-            const divCol8 = createElement("div")
-            classElement(divCol8, ["col-lg-8", "d-flex", "flex-column"])
+        localStorage.setItem("cart", JSON.stringify(cart));
 
-            divButtons = createElement("div")
+        itemNumber.innerHTML = cart.length;
+      };
+      addToCart((document.location.href = "./cart.html"));
+    });
+  });
 
-         
-            let teddyName = createElement("h2")
-            teddyPrice = createElement("span")
-            teddyDescription = createElement("p")
-            teddyImage = createElement("img")
-            teddyImage.onload = function(){
-                teddyImage.style.height = "200px";
-            };
-            teddyLabel = createElement("label")
-            teddySelect = createElement("select")
-            previousButton = createElement("button")
-            addButton = createElement("button")
-
-         
-            teddyName.innerHTML = camera.name
-            teddyPrice.innerHTML = "Price : " + " " + camera.price / 100 + " $"
-            teddyDescription.innerHTML = "Description :" + " " + camera.description
-            teddyImage.src = camera.imageUrl
-            teddyLabel.innerHTML = "Lenses : "
-            previousButton.innerHTML = "Previous"
-            addButton.innerHTML = "Add to cart"
-
-      
-            classElement(divButtons, ["divButtons"])
-            classElement(teddyName, ["teddyName"])
-            classElement(teddyPrice, ["teddyPrice"])
-            classElement(teddyDescription, ["teddyDescription"])
-            classElement(addButton, ["btn", "btn-outline-dark", "add-cart"])
-            classElement(teddyImage, ["teddyImg"])
-            classElement(previousButton, ["btn", "btn-outline-dark", "returnLink"])
-            classElement(teddySelect, ["selectLenses"])
-            
-
-            teddyLabel.setAttribute("for", "lense")
-            previousButton.setAttribute("href", "index.html")
-            teddySelect.setAttribute("id","idd")
-
-            
-            for (let i = 0; i < camera.lenses.length; i++) {
-                let option = createElement("option");
-                let teddyColors = camera.lenses[i];
-                option.innerHTML = teddyColors;
-                
-                
-                append(teddySelect, option);
-            }
-
-            
-              
-            append(choosenProduct, divCol4)
-            append(divCol4, teddyImage)
-            append(choosenProduct, divCol8)
-            append(divCol8, teddyName)
-            append(divCol8, teddyDescription)
-            append(divCol8, teddyPrice)
-            append(divCol8, teddyLabel)
-            append(teddyLabel, teddySelect)
-            append(divCol8, divButtons)
-            append(divButtons, previousButton)
-            append(divButtons, addButton)
-
-            
-            addButton.addEventListener("click", () => {
-                try {
-                    addTocart()
-                } catch (error) {
-                    choosenProduct.innerHTML = "<h3 class = error> <b><i> Sorry , something has gone wrong please try again later </h3>"
-                }
-            })
-          
-
-            previousButton.addEventListener("click", () => {
-                previousFunction()
-            })
-
-        }).catch((error) => {
-            if (idCameras.length != 24 || idCameras === undefined || idCameras != urlParams) {
-                choosenProduct.innerHTML = "<h3 class = error><b><i> Sorry , the selected product does not exist , please came back to home page and try an other product</h3>"
-            }
-        })
-}
-try {
-    fetchById()
-} catch (error) {
-    choosenProduct.innerHTML = " <h3 class = error><b><i>!!!!SORRY WE HAVE A PROBLEM IN OUR ATTEMPT TO CONNECT TO THE SERVER,PLEASE TRY AGAIN LATER...</h3>"
-}
-
-
-/*
-function GetSelectedText(){
-    var e = document.getElementById("idd");
-    var result = e.options[e.selectedIndex].text;
-    document.getElementById("result").innerHTML = result;
-}
-
-*/
+let cartNum = JSON.parse(localStorage.getItem("cart"));
+itemNumber.innerHTML = cartNum.length;
