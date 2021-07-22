@@ -11,6 +11,7 @@ if (checkStorage) {
   itemNumber.innerHTML = cart.length;
 }
 
+lodPage = () => {
 fetch("http://localhost:3000/api/cameras/")
   .then((response) => response.json())
   .then(function (data) {
@@ -103,6 +104,8 @@ fetch("http://localhost:3000/api/cameras/")
       container.appendChild(divColum);
     }
   });
+}
+lodPage();
 
 let cartNum = JSON.parse(localStorage.getItem("cart"));
 itemNumber.innerHTML = cartNum.length;

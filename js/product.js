@@ -11,8 +11,10 @@ let cart = [];
 const checkStorage = localStorage.getItem("cart");
 const checkStorageParse = JSON.parse(localStorage.getItem("cart"));
 
-cart = [...checkStorageParse];
-itemNumber.innerHTML = cart.length;
+if (checkStorage) {
+  cart = [...checkStorageParse];
+  itemNumber.innerHTML = cart.length;
+}
 
 fetch("http://localhost:3000/api/cameras/" + camId)
   .then((response) => response.json())
