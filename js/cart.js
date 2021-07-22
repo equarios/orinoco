@@ -77,12 +77,22 @@ const address = document.getElementById("address");
 const orderForm = document.getElementById("orderForm");
 
 const orderUrl = "http://localhost:3000/api/cameras/order";
+
+let test = {};
 let contact;
 let orderToSend;
 
 const orderCamera = () => {
   orderForm.addEventListener("submit", (e) => {
     e.preventDefault();
+
+    let result = true;
+
+		for (let key in test) {
+			if (test[key] === false) {
+				result = false;
+			}
+		}
 
     contact = {
       lastName: lastName.value,
@@ -103,7 +113,7 @@ const orderCamera = () => {
       .then((response) => response.json())
       .then(function (order) {
         let orderConfirmed = {
-          name: contact.lastName + " - " + contact.firstName,
+          name: contact.lastName + "  " + contact.firstName,
           price: total,
           orderId: order.orderId,
         };

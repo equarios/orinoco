@@ -6,7 +6,7 @@ const greet = document.getElementById("greetS");
 const getOrder = JSON.parse(localStorage.getItem("customerOrder"));
 
 const custName = document.createElement("h2");
-custName.innerHTML = " Thank You For Order" + " " + getOrder.name + " :";
+custName.innerHTML = " Thank You For Order" + " " + getOrder.name;
 
 const totalAmount = document.createElement("p");
 totalAmount.innerHTML = "Your Total Amount Is : " + getOrder.price + " $ ";
